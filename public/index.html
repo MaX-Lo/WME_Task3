@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>WME Course Exercise HTML, CSS and JS &bull; Sample Solution - REST API</title>
+	<meta name="description" content="Sample solution for the first course exercise HTML and CSS of the lecture Web and Multimedia Engineering">
+	<meta name="author" content="FIXME">
+	<meta name="keywords" content="Web and Multimedia Engineering, Course, Exercise">
+
+	<link href="assets/css/html5reset.css" type="text/css" rel="stylesheet">
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
+	<link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="assets/css/style.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+
+<header id="sticky_header">
+	<nav class="container clearfix" role="navigation">
+		<a class="logo" href="/">world_data</a>
+		<ul id="main_nav" class="clearfix">
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A1 - Table</a>
+			</li>
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A2 - Parse</a>
+			</li>
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A2 - Save</a>
+			</li>
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A2 - Print</a>
+			</li>
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A3 - REST</a>
+			</li>
+			<li>
+				<a href=""><i class="fa fa-list-ul"></i>A4 - Vis</a>
+			</li>
+		</ul>
+		 <a href="#" id="pull"><i class="fa fa-list-ul"></i></a>
+	</nav>
+</header>
+
+<div class="container">
+	<section>
+		<h1>World Data Overview ... </h1>
+		<div class="rest-interface">
+			<div class="rest-country">
+				<div class="rest-api-block">
+					<h2>Filter Countries</h2>
+					<form name="country_filter" id="country_filter" method="GET">
+						<p>
+							<label for="country_filter_id">country id</label>
+							<input type="text" name="country_filter_id" id="country_filter_id">
+						</p>
+						<p>
+							<label for="country_filter_range">country id range (eg: 2-5)</label>
+							<input type="text" name="country_filter_range" id="country_filter_range">
+						</p>
+						<p class="submit">
+							<input type="submit" name="submit" id="add_submit" value="Filter Countries">
+						</p>
+					</form>
+				</div>
+			</div>
+			<div class="rest-prop">
+				<div class="rest-api-block">
+					<h2>Properties</h2>
+					<select id="prop_selection">
+						<!--load options via ajax-->
+					</select>
+					<button class="green_btn" id="show_selected_prop">Show</button>
+					<button class="green_btn" id="hide_selected_prop">Hide</button>
+				</div>
+			</div>
+			<div class="rest-add">
+				<div class="rest-api-block">
+					<h2>Add Country</h2>
+					<form name="country_add" id="country_add" method="POST">
+						<p>
+							<label for="country_name">country name</label>
+							<input type="text" name="country_name" id="country_name">
+						</p>
+						<p>
+							<label for="country_birth">birth rate / 1000</label>
+							<input type="number" name="country_birth" id="country_birth">
+						</p>
+						<p>
+							<label for="country_cellphone">cellphones / 100</label>
+							<input type="number" name="country_cellphone" id="country_cellphone">
+						</p>
+						<p class="submit">
+							<input type="submit" name="submit" id="add_submit" value="Add Country">
+						</p>
+					</form>
+				</div>
+			</div>
+			<div class="rest-delete">
+				<div class="rest-api-block">
+					<h2>Delete Country</h2>
+					<form name="country_delete" id="country_delete" method="DELETE">
+						<p>
+							<label for="country_delete_id">Country ID to delete</label>
+							<input type="text" name="country_delete_id" id="country_delete_id">
+						</p>
+						<p class="submit">
+							<input type="submit" name="submit" id="rm_submit" value="Remove Country">
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div style="clear: both;">&nbsp;</div>
+
+		<table>
+			<thead>
+				<tr id="table_head">
+					<th>ID</th>
+					<th>Country</th>
+					<th>birth rate / 1000</th>
+					<th>cellphones / 100</th>
+					<th>children / woman</th>
+					<th>electric usage</th>
+					<th>internet usage</th>
+				</tr>
+			</thead>
+			<tbody id="table_body">
+				<!-- list countrys with ajax -->
+			</tbody>
+		</table>
+
+	</section>
+</div>
+
+<footer>
+	<div class="container">
+		<div>
+			<p>
+				Copyright &copy; 2016 world_data<br>
+				First course exercise <strong>HTML, CSS and JS</strong> of the lecture Web and Multimedia Engineering.
+			</p>
+		</div>
+		<div class="right">
+			<p>
+				This solution has been created by:<br>
+				TEAM fixme
+			</p>
+		</div>
+	</div>
+</footer>
+
+<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="assets/js/ajax.js"></script>
+
+</body>
+</html>

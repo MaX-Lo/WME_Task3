@@ -36,16 +36,36 @@ app.get('/items', (req, res) => {
 
 /** get country, with all properties, by id */
 app.get('/items/:id', (req, res) => {
-    let item = getItem(req.params.id);
+    let id = req.params.id;
+    let item = getItem(id);
     if (!item) {
-        res.send('No such id ' + req.params.id + ' in database')
+        res.send('No such id ' + id + ' in database')
     } else {
         res.send(item);
     }
 });
 
+/** get all countries by id in range from id1 to id2 (id1 and id2 inclusive) */
+app.get('/items/:id1/:id2', (req, res) => {
+    id1 = req.params.id1;
+    id2 = req.params.id2;
+
+    if (!getItem(id1) || !getItem(id2)) {
+        res.send('Range not possible');
+    }
+
+    let start = id1;
+    let end = id2;
+    if (id1 > id2) {
+        start = id2;
+        end = id1;
+    }
+
+    res.send(getItems(start, end));
+});
+
 /**
- * @param id - item id, has to match original schema (e.g. 001 for instead of 1)
+ * @param id - item id, has to match original schema (e.g. 001 instead of 1)
  * @returns matching item, if none exists null
  */
 function getItem(id) {
@@ -58,6 +78,20 @@ function getItem(id) {
         }
     }
     return null;
+}
+
+/** get all items by id in range from start to end inclusive */
+function getItems(start, end) {
+    let result = [];
+    for (let i = 0; i < json.length; i++){
+        let item = json[i];
+        for (let key in item){
+            if (key === 'id' && item.hasOwnProperty(key) && item[key] >= start && item[key] <= end) {
+                result.push(item);
+            }
+        }
+    }
+    return result;
 }
 
 // DO NOT CHANGE!

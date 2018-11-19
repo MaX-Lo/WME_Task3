@@ -15,15 +15,32 @@ app.use( express.static( path.join(__dirname, "public") ) );
 
 // END DO NOT CHANGE!
 
-
 /**************************************************************************
-****************************** csv2json *********************************
-**************************************************************************/
+ ****************************** csv2json *********************************
+ **************************************************************************/
+let json;
+converter = new Converter({});
+converter.fromFile('world_data.csv')
+    .then((jsonObj)=>{
+        json = jsonObj;
+    });
 
 /**************************************************************************
 ********************** handle HTTP METHODS ***********************
 **************************************************************************/
+app.get('/logJSON', function (req, res) {
+    let answer = logJSON();
+    res.send( answer );
+});
 
+function logJSON() {
+    if (json) {
+        console.log(json);
+        return 'json printed to node console';
+    } else {
+        return 'error, json not undefined';
+    }
+}
 
 // DO NOT CHANGE!
 // bind server to port

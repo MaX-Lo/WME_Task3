@@ -1,4 +1,4 @@
-// DO NOT CHANGE!
+// DO NOT CHANGE!  - why not?
 //init app with express, util, body-parser, csv2json
 var express = require('express');
 var app = express();
@@ -28,18 +28,36 @@ converter.fromFile('world_data.csv')
 /**************************************************************************
 ********************** handle HTTP METHODS ***********************
 **************************************************************************/
-app.get('/logJSON', function (req, res) {
-    let answer = logJSON();
-    res.send( answer );
+
+/** get all countries with all properties **/
+app.get('/items', (req, res) => {
+    res.send(json)
 });
 
-function logJSON() {
-    if (json) {
-        console.log(json);
-        return 'json printed to node console';
+/** get country, with all properties, by id */
+app.get('/items/:id', (req, res) => {
+    let item = getItem(req.params.id);
+    if (!item) {
+        res.send('No such id ' + req.params.id + ' in database')
     } else {
-        return 'error, json not undefined';
+        res.send(item);
     }
+});
+
+/**
+ * @param id - item id, has to match original schema (e.g. 001 for instead of 1)
+ * @returns matching item, if none exists null
+ */
+function getItem(id) {
+    for (let i = 0; i < json.length; i++){
+        let item = json[i];
+        for (let key in item){
+            if (key === 'id' && item.hasOwnProperty(key) && item[key] === id) {
+                return item;
+            }
+        }
+    }
+    return null;
 }
 
 // DO NOT CHANGE!

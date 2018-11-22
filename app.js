@@ -29,6 +29,22 @@ converter.fromFile('world_data.csv')
 ********************** handle HTTP METHODS ***********************
 **************************************************************************/
 
+/* add an item with name and 2 arbitrarily chosen properties */
+app.post('/items',function(req,res){
+    let item = req.body;
+
+    if (!item.name) {
+        res.status(400);
+        res.send('Bad request, name is missing');
+    } else if (Object.keys(item).length !== 3) {
+        res.status(400);
+        res.send('Bad request, specify 2 freely chosen properties!')
+    }
+    // ToDo check for available IDs and assign one (but isn't part of task specification...)
+    json.push(item);
+    res.end('Added country ' + item.name + ' to list!');
+})
+
 /** get all countries with all properties **/
 app.get('/items', (req, res) => {
     res.send(json)
@@ -39,6 +55,7 @@ app.get('/items/:id', (req, res) => {
     let id = req.params.id;
     let item = getItem(id);
     if (!item) {
+        res.status(400);
         res.send('No such id ' + id + ' in database')
     } else {
         res.send(item);
@@ -51,16 +68,15 @@ app.get('/items/:id1/:id2', (req, res) => {
     id2 = req.params.id2;
 
     if (!getItem(id1) || !getItem(id2)) {
+        res.status(400);
         res.send('Range not possible');
     }
-
     let start = id1;
     let end = id2;
     if (id1 > id2) {
         start = id2;
         end = id1;
     }
-
     res.send(getItems(start, end));
 });
 

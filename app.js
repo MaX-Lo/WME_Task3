@@ -38,16 +38,20 @@ app.post('/items',function(req,res){
         res.status(400);
         res.send('Bad request, name is missing');
         return;
-    // ToDo check if properties already exist, if not return bad request --- depends on what is meant by '2 arbitrarily props...'
-    } else if (Object.keys(item).length !== 3) {
+    } else if (Object.keys(item).length !== 3 || !validateProperties(Object.keys(item))) {
         res.status(400);
-        res.send('Bad request, specify 2 freely chosen properties!');
+        res.send('Bad request, specify 2 valid, freely chosen properties!');
         return;
     }
     item.id = getFreeId();
     console.log("added item with id " + item.id);
     json.push(item);
-    res.end('Added country ' + item.name + ' to list!');
+    res.send('Added country ' + item.name + ' to list!');
+});
+
+/** get all available properties **/
+app.get('/properties', (req, res) => {
+    res.send(getProperties());
 });
 
 /** get all countries with all properties **/
@@ -58,8 +62,7 @@ app.get('/items', (req, res) => {
 /** get country, with all properties, by id */
 app.get('/items/:id', (req, res) => {
     let id = req.params.id;
-    // converting to int and str ensures correctly formatted ids e.g 04 or 4  will result always in 004 that way
-    let item = getItem(toStringId(toIntId(id)));
+    let item = getItem(id);
     if (!item) {
         res.status(400);
         res.send('No such id ' + id + ' in database')
@@ -73,7 +76,7 @@ app.get('/items/:id1/:id2', (req, res) => {
     id1 = req.params.id1;
     id2 = req.params.id2;
 
-    if (!getItem(toStringId(toIntId(id1))) || !getItem(toStringId(toIntId(id2)))) {
+    if (!getItem(id1) || !getItem(id2)) {
         res.status(400);
         res.send('Range not possible');
     }
@@ -89,10 +92,12 @@ app.get('/items/:id1/:id2', (req, res) => {
 });
 
 /**
- * @param id - item id, has to match original schema (e.g. 001 instead of 1)
+ * @param id - item id as String
  * @returns matching item, if none exists null
  */
 function getItem(id) {
+    // converting to int and str ensures correctly formatted ids e.g 04 or 4  will result always in 004 that way
+    id = toStringId(toIntId(id));
     for (let i = 0; i < json.length; i++){
         let item = json[i];
         for (let key in item){
@@ -142,6 +147,22 @@ function getFreeId() {
         testing += 1;
     }
     return toStringId(testing);
+}
+
+/** return all valid properties, assumes there are no more props than in the sample data **/
+function getProperties() {
+    return Object.keys(json[0]);
+}
+
+/** return true if given props are valid properties **/
+function validateProperties(props) {
+    let validProps = getProperties();
+    for (let i in props) {
+        if (!validProps.includes(props[i])) {
+            return false;
+        }
+    }
+    return true;
 }
 
 // DO NOT CHANGE!

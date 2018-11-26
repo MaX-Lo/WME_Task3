@@ -32,14 +32,17 @@ converter.fromFile('world_data.csv')
 /* add an item with name and 2 arbitrarily chosen properties */
 app.post('/items',function(req,res){
     let item = req.body;
+    console.log("item" + JSON.stringify(item));
 
     if (!item.name) {
         res.status(400);
         res.send('Bad request, name is missing');
+        return;
     // ToDo check if properties already exist, if not return bad request --- depends on what is meant by '2 arbitrarily props...'
     } else if (Object.keys(item).length !== 3) {
         res.status(400);
-        res.send('Bad request, specify 2 freely chosen properties!')
+        res.send('Bad request, specify 2 freely chosen properties!');
+        return;
     }
     item.id = getFreeId();
     console.log("added item with id " + item.id);
@@ -131,7 +134,7 @@ function toIntId(strID) {
     return parseInt(strID);
 }
 
-/* get next free id as string formated as 'xxx'*/
+/* get next free id as string formatted as 'xxx'*/
 function getFreeId() {
     let id;
     let testing = 1;

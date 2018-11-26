@@ -54,7 +54,31 @@ app.get('/properties', (req, res) => {
     res.send(getProperties());
 });
 
-/** get property by given id num **/
+/** delete last item in list */
+app.delete('/items', (req, res) => {
+    if (json.length === 0) {
+        res.send('No items left, database is empty!')
+    }
+    let item = json[json.length - 1];
+    json.splice(-1, 1);
+   res.send('Deleted last country: ' + item.id + '!')
+});
+
+/** delete item with given id */
+app.delete('/items/:id', (req, res) => {
+    let id = req.params.id;
+    let item = getItem(id);
+    if (!item) {
+        res.status(400);
+        res.send('No such id ' + id + ' in database.');
+    }
+    json = json.filter((item2) => {
+        return item2 !== item;
+    });
+    res.send('Item ' + id + ' deleted successfully.')
+});
+
+/** get property by given id num */
 app.get('/properties/:num', (req, res) => {
     let num = req.params.num;
     let prop = getProperties()[num];

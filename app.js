@@ -54,12 +54,24 @@ app.get('/properties', (req, res) => {
     res.send(getProperties());
 });
 
+/** get property by given id num **/
+app.get('/properties/:num', (req, res) => {
+    let num = req.params.num;
+    let prop = getProperties()[num];
+    console.log(prop);
+    if (!prop) {
+        res.status(400);
+        res.send('No such property num ' + num + ' in database')
+    }
+    res.send(prop);
+});
+
 /** get all countries with all properties **/
 app.get('/items', (req, res) => {
     res.send(json)
 });
 
-/** get country, with all properties, by id */
+/** get country, with all properties, by id **/
 app.get('/items/:id', (req, res) => {
     let id = req.params.id;
     let item = getItem(id);
@@ -152,6 +164,15 @@ function getFreeId() {
 /** return all valid properties, assumes there are no more props than in the sample data **/
 function getProperties() {
     return Object.keys(json[0]);
+}
+
+function getProperty(num) {
+    props = getProperties();
+    if (false && num >= props.length) {
+        return null;
+    } else {
+        return props[num];
+    }
 }
 
 /** return true if given props are valid properties **/

@@ -1,6 +1,7 @@
 // DO NOT CHANGE!  - why not?
 //init app with express, util, body-parser, csv2json
 var express = require('express');
+var cors = require('cors');
 var app = express();
 var sys = require('util');
 var path = require('path');
@@ -14,6 +15,7 @@ app.use( bodyParser.json() );
 app.use( express.static( path.join(__dirname, "public") ) );
 
 // END DO NOT CHANGE!
+app.use(cors());
 
 /**************************************************************************
  ****************************** csv2json *********************************
@@ -97,6 +99,8 @@ app.get('/items', (req, res) => {
 
 /** get country, with all properties, by id **/
 app.get('/items/:id', (req, res) => {
+    console.log("get item by id request");
+
     let id = req.params.id;
     let item = getItem(id);
     if (!item) {

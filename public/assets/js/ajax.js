@@ -54,9 +54,9 @@ function fetchItems() {
         async: true,
         success: function (data) {
             onReceivedItems(data);
+            setRequestFeedback(true);
         }, error: function (jqXHR, text, err) {
-            // Todo handle error
-            console.log("Error, fetching all items")
+            setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText)
         }
     });
 }
@@ -93,9 +93,9 @@ function fetchItemByID(id) {
         async: true,
         success: function (data) {
             onReceivedItems([data]);
+            setRequestFeedback(true);
         }, error: function (jqXHR, textStatus, errorThrown) {
-            // todo Handle error if occurred e.g. no such item with id xxx
-            console.log('err');
+            setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText)
         }
     });
 }
@@ -107,9 +107,17 @@ function fetchItemsByRange(startID, endID) {
         async: true,
         success: function (data) {
             onReceivedItems(data);
+            setRequestFeedback(true);
         }, error: function (jqXHR, textStatus, errorThrown) {
-            // todo Handle error if occurred e.g. no such item with id xxx
-            console.log('err');
+            setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText);
         }
     });
+}
+
+function setRequestFeedback(success, status = '') {
+    if (success) {
+        $('#status_code').html("Request successful " + status).css("background-color", "green");
+    } else {
+        $('#status_code').html("Request failed with status code: " + status).css("background-color", "red");
+    }
 }

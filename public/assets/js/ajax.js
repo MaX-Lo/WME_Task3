@@ -7,21 +7,44 @@ $(function(){
     $('#country_filter').on('submit', function(event) {
         event.preventDefault();
         const filter_id = $("#country_filter_id").val();
+        const id_range = $('#country_filter_range').val();
+
         if (filter_id !== "") {
             fetchItemByID(filter_id);
             return;
         }
-        const id_range = $('#country_filter_range').val();
+
         if (id_range !== "") {
-            const startID = "1";
-            const endID = "2";
+            const iDs = parseRangeString(id_range);
+            const startID = iDs[0];
+            const endID = iDs[1];
             //Todo extract start and end from range string
             fetchItemsByRange(startID, endID);
             return
         }
+
         alert("Please specify an ID or range.");
     });
 });
+
+// extract start and end id from raw range input string
+function parseRangeString(rangeString) {
+    var pos = rangeString.indexOf("-");
+    if (pos === -1) {
+        pos = rangeString.indexOf(",");
+    }
+    if (pos === -1) {
+        pos = rangeString.indexOf(";");
+    }
+    if (pos === -1) {
+        alert("invalid range given! Valid range formats are: 1) id1-id2   2) id1,id2   3) id1;id2. Fetching all items up to given id.")
+    }
+    console.log(pos);
+    const start = rangeString.slice(0, pos);
+    const end = rangeString.slice(pos+1, rangeString.length);
+    console.log("start:" + start + " end " + end);
+    return [start, end];
+}
 
 // fetch all items with all properties
 function fetchItems() {
@@ -32,11 +55,17 @@ function fetchItems() {
         success: function (data) {
             onReceivedItems(data);
         }, error: function (jqXHR, text, err) {
+            // Todo handle error
             console.log("Error, fetching all items")
         }
     });
 }
 
+/**
+ * fills the table with the given items
+ *
+  * @param items - array of items
+ */
 function onReceivedItems(items) {
     console.log("got items:");
     console.log(items);
@@ -63,7 +92,7 @@ function fetchItemByID(id) {
         url: "http://localhost:3000/items/"+id,
         async: true,
         success: function (data) {
-            onReceivedItems(data);
+            onReceivedItems([data]);
         }, error: function (jqXHR, textStatus, errorThrown) {
             // todo Handle error if occurred e.g. no such item with id xxx
             console.log('err');
@@ -72,5 +101,15 @@ function fetchItemByID(id) {
 }
 
 function fetchItemsByRange(startID, endID) {
-    // Todo
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:3000/items/" + startID + "/" + endID,
+        async: true,
+        success: function (data) {
+            onReceivedItems(data);
+        }, error: function (jqXHR, textStatus, errorThrown) {
+            // todo Handle error if occurred e.g. no such item with id xxx
+            console.log('err');
+        }
+    });
 }

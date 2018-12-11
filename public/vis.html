@@ -2,158 +2,186 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
-	<title>WME Course Exercise HTML, CSS and JS &bull; Sample Solution - REST API</title>
-	<meta name="description" content="Sample solution for the first course exercise HTML and CSS of the lecture Web and Multimedia Engineering">
-	<meta name="author" content="FIXME">
-	<meta name="keywords" content="Web and Multimedia Engineering, Course, Exercise">
+    <meta charset="UTF-8">
+    <title>WME Course Exercise HTML, CSS and JS &bull; Sample Solution - REST API</title>
+    <meta name="description"
+          content="Sample solution for the first course exercise HTML and CSS of the lecture Web and Multimedia Engineering">
+    <meta name="author" content="FIXME">
+    <meta name="keywords" content="Web and Multimedia Engineering, Course, Exercise">
 
-	<link href="assets/css/html5reset.css" type="text/css" rel="stylesheet">
-	<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic' rel='stylesheet' type='text/css'>
-	<link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-	<link href="assets/css/style.css" type="text/css" rel="stylesheet">
+    <link href="assets/css/html5reset.css" type="text/css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic'
+          rel='stylesheet' type='text/css'>
+    <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" type="text/css" rel="stylesheet">
 
     <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script type="text/javascript" src="assets/js/ajax.js"></script>
+    <script src="//d3js.org/d3.v4.min.js"></script>
+
+    <!--<script type="text/javascript" src="assets/js/ajax.js"></script>-->
 </head>
+<style> /* set the CSS */
 
+.bar { fill: steelblue; }
+
+</style>
 <body>
-
 <header id="sticky_header">
-	<nav class="container clearfix" role="navigation">
-		<a class="logo" href="/">world_data</a>
-		<ul id="main_nav" class="clearfix">
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A1 - Table</a>
-			</li>
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A2 - Parse</a>
-			</li>
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A2 - Save</a>
-			</li>
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A2 - Print</a>
-			</li>
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A3 - REST</a>
-			</li>
-			<li>
-				<a href=""><i class="fa fa-list-ul"></i>A4 - Vis</a>
-			</li>
-		</ul>
-		 <a href="#" id="pull"><i class="fa fa-list-ul"></i></a>
-	</nav>
+    <nav class="container clearfix" role="navigation">
+        <a class="logo" href="/">world_data</a>
+        <ul id="main_nav" class="clearfix">
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A1 - Table</a>
+            </li>
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A2 - Parse</a>
+            </li>
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A2 - Save</a>
+            </li>
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A2 - Print</a>
+            </li>
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A3 - REST</a>
+            </li>
+            <li>
+                <a href=""><i class="fa fa-list-ul"></i>A4 - Vis</a>
+            </li>
+        </ul>
+        <a href="#" id="pull"><i class="fa fa-list-ul"></i></a>
+    </nav>
 </header>
-
 <div class="container">
-	<section>
-		<h1>World Data Overview ... </h1>
-		<div class="rest-interface">
-			<div class="rest-country">
-				<div class="rest-api-block">
-					<h2>Filter Countries</h2>
-					<form name="country_filter" id="country_filter" method="GET">
-						<p>
-							<label for="country_filter_id">country id</label>
-							<input type="text" name="country_filter_id" id="country_filter_id">
-						</p>
-						<p>
-							<label for="country_filter_range">country id range (eg: 2-5)</label>
-							<input type="text" name="country_filter_range" id="country_filter_range">
-						</p>
-						<p class="submit">
-							<input type="submit" name="submit" id="filter_submit" value="Filter Countries">
-						</p>
-					</form>
-				</div>
-			</div>
-			<div class="rest-prop">
-				<div class="rest-api-block">
-					<h2>Properties</h2>
-					<select id="prop_selection">
-						<!--load options via ajax-->
-					</select>
-					<button class="green_btn" id="show_selected_prop">Show</button>
-					<button class="green_btn" id="hide_selected_prop">Hide</button>
-				</div>
-			</div>
-			<div class="rest-add">
-				<div class="rest-api-block">
-					<h2>Add Country</h2>
-					<form name="country_add" id="country_add" method="POST">
-						<p>
-							<label for="country_name">country name</label>
-							<input type="text" name="country_name" id="country_name">
-						</p>
-						<p>
-							<label for="country_birth">birth rate / 1000</label>
-							<input type="number" name="country_birth" id="country_birth">
-						</p>
-						<p>
-							<label for="country_cellphone">cellphones / 100</label>
-							<input type="number" name="country_cellphone" id="country_cellphone">
-						</p>
-						<p class="submit">
-							<input type="submit" name="submit" id="add_submit" value="Add Country">
-						</p>
-					</form>
-				</div>
-			</div>
-			<div class="rest-delete">
-				<div class="rest-api-block">
-					<h2>Delete Country</h2>
-					<form name="country_delete" id="country_delete" method="DELETE">
-						<p>
-							<label for="country_delete_id">Country ID to delete</label>
-							<input type="text" name="country_delete_id" id="country_delete_id">
-						</p>
-						<p class="submit">
-							<input type="submit" name="submit" id="rm_submit" value="Remove Country">
-						</p>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div style="clear: both;">&nbsp;</div>
+    <section>
+        <div id="vis_container"></div>
+        <div id="status_code"></div>
+        <script>
+            fetchItems();
+            let items = [];
 
-		<div id="status_code">No requests performed yet</div>
-		<table>
-			<thead>
-				<tr id="table_head">
-					<th>ID</th>
-					<th>Country</th>
-					<th>birth rate / 1000</th>
-					<th>cellphones / 100</th>
-					<th>children / woman</th>
-					<th>electric usage</th>
-					<th>internet usage</th>
-				</tr>
-			</thead>
-			<tbody id="table_body">
-        		<!-- list countries with ajax -->
-			</tbody>
-		</table>
+            // set the dimensions and margins of the graph
+            let margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = 960 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
 
-	</section>
+            // set the ranges
+            let x = d3.scaleBand()
+                .range([0, width])
+                .padding(0.1);
+            let y = d3.scaleLinear()
+                .range([height, 0]);
+
+            // append the svg object to the body of the page
+            // append a 'group' element to 'svg' and move it to the top left margin
+            let svg = d3.select("#vis_container").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            // fetch all items with all properties
+            function fetchItems() {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:3000/items",
+                    async: true,
+                    success: function (data) {
+                        items = data;
+                        fillBarChart('birth_rate_per_1000');
+                        setRequestFeedback(true);
+                    }, error: function (jqXHR, text, err) {
+                        setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText)
+                    }
+                });
+            }
+
+            function fillBarChart(property) {
+                console.log('new property is: ' + property);
+                let data = items;
+
+                //select all bars on the graph, take them out, and exit the previous data set.
+                //then you can add/enter the new data set
+                let bars = svg.selectAll(".bar")
+                    .remove()
+                    .exit()
+                    .data(data);
+
+                // Scale the range of the data in the domains
+                x.domain(data.map(d => d.name));
+                y.domain([0, d3.max(data, d => parseFloat(d[property]) )]);
+
+                // append the rectangles for the bar chart
+                bars.enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function(d) { return x(d.name); })
+                    .attr("width", x.bandwidth())
+                    .attr("y", function(d) { return y(d[property]); })
+                    .attr("height", function(d) { return height - y(parseFloat(d[property])); });
+
+                // add the x Axis
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x))
+                    .selectAll("text")
+                    .attr("y", 0)
+                    .attr("x", 9)
+                    .attr("dy", ".35em")
+                    .attr("transform", "rotate(90)")
+                    .style("text-anchor", "start");
+
+                // add the y Axis
+                svg.append("g").call(d3.axisLeft(y));
+            }
+
+            // Handler for drop down value change
+            let dropdownChange = function() {
+                let newProperty = d3.select(this).property('value');
+                fillBarChart(newProperty);
+            };
+
+            // add the drop down to the selected element
+            let dropdown = d3.select("#vis_container")
+                .insert("select", "svg")
+                .on("change", dropdownChange);
+
+            // Todo get properties via an AJAX request
+            cereals = ["id", "name", "birth_rate_per_1000", "cell_phones_per_100"];
+
+            // fill the drop down with our properties as options
+            dropdown.selectAll("option")
+                .data(cereals)
+                .enter().append("option")
+                .attr("value", function (d) { return d; })
+                .text(function (d) { return d; });
+
+            function setRequestFeedback(success, status = '') {
+                if (success) {
+                    $('#status_code').html("Request successful " + status).css("background-color", "green");
+                } else {
+                    $('#status_code').html("Request failed with status code: " + status).css("background-color", "red");
+                }
+            }
+        </script>
+    </section>
 </div>
-
 <footer>
-	<div class="container">
-		<div>
-			<p>
-				Copyright &copy; 2016 world_data<br>
-				First course exercise <strong>HTML, CSS and JS</strong> of the lecture Web and Multimedia Engineering.
-			</p>
-		</div>
-		<div class="right">
-			<p>
-				This solution has been created by:<br>
-				TEAM 30
-			</p>
-		</div>
-	</div>
+    <div class="container">
+        <div>
+            <p>
+                Copyright &copy; 2016 world_data<br>
+                First course exercise <strong>HTML, CSS and JS</strong> of the lecture Web and Multimedia Engineering.
+            </p>
+        </div>
+        <div class="right">
+            <p>
+                This solution has been created by:<br>
+                TEAM 30
+            </p>
+        </div>
+    </div>
 </footer>
 
 </body>

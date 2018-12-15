@@ -121,3 +121,24 @@ function setRequestFeedback(success, status = '') {
         $('#status_code').html("Request failed with status code: " + status).css("background-color", "red");
     }
 }
+
+// Properties into selection
+function fetchProperties() {
+
+    $.ajax({                                      //get prooperties from REST-API
+        type: "GET",
+        url: "http://localhost:3000/properties",
+        async: true,
+        success: function (data) {
+          propertiesToOptions(data);
+        }
+    });
+}
+
+function propertiesToOptions(data){
+  var options = '';
+  for (var i = 0; i < data.length; i++){    //go through all properties of array
+    options += '<option value="'+ i+1+'">'+data[i]+'</option>'  //turn into string of properties as html options of select
+  }
+$("#prop_selection").append(options);     	//add to select "prop_selections"
+}

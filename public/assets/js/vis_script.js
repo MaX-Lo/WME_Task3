@@ -2,6 +2,9 @@ fetchProperties();
 fetchItems();
 let items = [];
 
+let map = new L.Map('map_id');
+initmap();
+
 // set the dimensions and margins of the graph
 let margin = {top: 20, right: 20, bottom: 110, left: 40},
     width = 700 - margin.left - margin.right,
@@ -79,6 +82,7 @@ function fetchItems() {
         success: function (data) {
             items = data;
             fillBarChart('id');
+            fillMarkers('id');
             setRequestFeedback(true);
         }, error: function (jqXHR, text, err) {
             setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText)
@@ -109,6 +113,7 @@ function fetchProperties() {
 function dropDownChange() {
     let newProperty = d3.select(this).property('value');
     fillBarChart(newProperty);
+    fillMarkers(newProperty);
 }
 
 // add the drop down to the selected element
@@ -131,4 +136,31 @@ function setRequestFeedback(success, status = '') {
     } else {
         $('#status_code').html("Request failed with status code: " + status).css("background-color", "red");
     }
+}
+
+function initmap() {
+    // create the tile layer with correct attribution
+    let osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    let osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
+    let osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 15, attribution: osmAttrib});
+
+    map.setView(new L.LatLng(0, 0), 1);
+    map.addLayer(osm);
+}
+
+let markers = {};
+function fillMarkers(property) {
+    // in case the markers aren't initialized yet they need to be created first
+    if (Object.keys(markers).length === 0) {
+        items.forEach(item => {
+            markers[item.name] = L.marker([item.gps_lat, item.gps_long]).addTo(map);
+            markers[item.name].bindPopup("");
+        });
+    }
+
+    items.forEach(item => {
+        markers[item.name].setPopupContent("<b>" + item.name + "</b><br>"
+            + "property: " + property + "<br>"
+            + "value: " + item[property]);
+    });
 }

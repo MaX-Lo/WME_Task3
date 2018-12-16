@@ -37,6 +37,10 @@
     d3.csv("sales.csv", function(error, data) {
         if (error) throw error;
 
+        console.log(data);
+        data = [{"salesperson": "Bob", "sales":33},
+            {"salesperson": "Robin", "sales":12}];
+        console.log(data);
         // format the data
         data.forEach(function(d) {
             d.sales = +d.sales;

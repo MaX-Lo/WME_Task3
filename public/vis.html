@@ -9,29 +9,27 @@
     <meta name="author" content="FIXME">
     <meta name="keywords" content="Web and Multimedia Engineering, Course, Exercise">
 
+    <!-- third party css stuff-->
     <link href="assets/css/html5reset.css" type="text/css" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic'
           rel='stylesheet' type='text/css'>
     <link href="assets/css/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" type="text/css" rel="stylesheet">
-
-    <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
-    <script src="//d3js.org/d3.v4.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
+
+    <!-- css files-->
+    <link href="assets/css/style.css" type="text/css" rel="stylesheet">
+    <link href="assets/css/vis_style.css" type="text/css" rel="stylesheet">
+
+    <!-- js libraries-->
+    <script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+    <script src="//d3js.org/d3.v4.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
             integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
             crossorigin=""></script>
-
-    <!--<script type="text/javascript" src="assets/js/ajax.js"></script>-->
 </head>
-<style> /* set the CSS */
 
-.bar { fill: steelblue; }
-#map_id { height: 250px; }
-</style>
 <body>
 <header id="sticky_header">
     <nav class="container clearfix" role="navigation">
@@ -61,12 +59,11 @@
 </header>
 <div class="container">
     <section>
-        <div id="map_id"></div>
         <div id="status_code"></div>
-        <div id="vis_container"></div>
-        <script>
-
-        </script>
+        <div id="floating_container">
+            <div id="map_id"></div>
+            <div id="vis_container"></div>
+        </div>
         <script type="text/javascript" src="assets/js/vis_script.js"></script>
     </section>
 </div>

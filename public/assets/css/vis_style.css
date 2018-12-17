@@ -1,0 +1,16 @@
+.bar { fill: steelblue; }
+
+#floating_container {
+    margin: 10px;
+    overflow: hidden;
+}
+
+#vis_container {
+    width: 550px;
+    float: left;
+}
+#map_id {
+    float: right;
+    height: 250px;
+    width: 550px;
+}

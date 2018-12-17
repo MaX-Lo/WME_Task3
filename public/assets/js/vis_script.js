@@ -2,13 +2,26 @@ fetchProperties();
 fetchItems();
 let items = [];
 
+let blueMarker = L.icon({
+    iconUrl: "assets/img/marker_blue.png",
+    iconSize:     [25, 34],
+    iconAnchor:   [12, 34],
+    popupAnchor:  [0, -30]
+});
+let greenMarker = L.icon({
+    iconUrl: "assets/img/marker_green.png",
+    iconSize:     [25, 34],
+    iconAnchor:   [12, 34],
+    popupAnchor:  [0, -30]
+});
 let map = new L.Map('map_id');
+let markers = {};
 initmap();
 
 // set the dimensions and margins of the graph
 let margin = {top: 20, right: 20, bottom: 110, left: 40},
-    width = 700 - margin.left - margin.right,
-    height = 350 - margin.top - margin.bottom;
+    width = 550 - margin.left - margin.right,
+    height = 250 - margin.top - margin.bottom;
 
 // set the ranges
 let x = d3.scaleBand()
@@ -46,7 +59,19 @@ function fillBarChart(property) {
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d[property]); })
-        .attr("height", function(d) { return height - y(parseFloat(d[property])); });
+        .attr("height", function(d) { return height - y(parseFloat(d[property])); })
+        .attr("id", function(d, i) { return d.name;})
+        .on('mouseover', function() {
+            console.log('mouseover on: ' + d3.select(this).attr('id'));
+            let name = d3.select(this).attr('id');
+            d3.select(this).style('fill', 'limegreen');
+            highlightMarker(name, true);
+        })
+        .on('mouseout', function() {
+            let name = d3.select(this).attr('id');
+            d3.select(this).style('fill', 'steelblue');
+            highlightMarker(name, false);
+        });
 
     if (init) {
         init = false;
@@ -82,7 +107,8 @@ function fetchItems() {
         success: function (data) {
             items = data;
             fillBarChart('id');
-            fillMarkers('id');
+            setupMarkers();
+            updatePopupTexts('id');
             setRequestFeedback(true);
         }, error: function (jqXHR, text, err) {
             setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText)
@@ -113,7 +139,7 @@ function fetchProperties() {
 function dropDownChange() {
     let newProperty = d3.select(this).property('value');
     fillBarChart(newProperty);
-    fillMarkers(newProperty);
+    updatePopupTexts(newProperty);
 }
 
 // add the drop down to the selected element
@@ -148,19 +174,45 @@ function initmap() {
     map.addLayer(osm);
 }
 
-let markers = {};
-function fillMarkers(property) {
-    // in case the markers aren't initialized yet they need to be created first
-    if (Object.keys(markers).length === 0) {
-        items.forEach(item => {
-            markers[item.name] = L.marker([item.gps_lat, item.gps_long]).addTo(map);
-            markers[item.name].bindPopup("");
-        });
-    }
+function setupMarkers() {
+    items.forEach(item => {
+        markers[item.name] = L.marker([item.gps_lat, item.gps_long], {icon: blueMarker}).addTo(map);
+        markers[item.name]['name'] = item.name;
+        markers[item.name]
+            .bindPopup("")
+            .on('mouseover', function () {
+                highlightMarker(this.name, true);
+                highlightBar(this.name, true);
+            })
+            .on('mouseout', function () {
+                highlightMarker(this.name, false);
+                highlightBar(this.name, false);
+            });
+    });
+}
 
+function updatePopupTexts(property) {
     items.forEach(item => {
         markers[item.name].setPopupContent("<b>" + item.name + "</b><br>"
             + "property: " + property + "<br>"
             + "value: " + item[property]);
     });
+}
+
+function highlightBar(itemName, isHighlight) {
+    let bar = d3.selectAll(".bar")
+        .filter(function(d) { return d.name === itemName; });
+    if (isHighlight) {
+        bar.style("fill", "limegreen");
+    } else {
+        bar.style("fill", "steelblue");
+    }
+}
+
+function highlightMarker(itemName, isHighlight) {
+    if (isHighlight) {
+        markers[itemName].setIcon(greenMarker);
+    } else {
+        markers[itemName].setIcon(blueMarker);
+    }
 }

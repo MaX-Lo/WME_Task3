@@ -124,7 +124,6 @@ function setRequestFeedback(success, status = '') {
 
 // Properties into selection
 function fetchProperties() {
-
     $.ajax({                                      //get prooperties from REST-API
         type: "GET",
         url: "http://localhost:3000/properties",

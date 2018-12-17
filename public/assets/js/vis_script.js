@@ -1,49 +1,51 @@
-fetchProperties();
-fetchItems();
-let items = [];
-
-let blueMarker = L.icon({
-    iconUrl: "assets/img/marker_blue.png",
-    iconSize:     [25, 34],
-    iconAnchor:   [12, 34],
-    popupAnchor:  [0, -30]
-});
-let greenMarker = L.icon({
-    iconUrl: "assets/img/marker_green.png",
-    iconSize:     [25, 34],
-    iconAnchor:   [12, 34],
-    popupAnchor:  [0, -30]
-});
+let blueMarker = createMarkerIcon("assets/img/marker_blue.png");
+let greenMarker = createMarkerIcon("assets/img/marker_green.png");
 let map = new L.Map('map_id');
 let markers = {};
-initmap();
+initMap();
 
-// set the dimensions and margins of the graph
-let margin = {top: 20, right: 20, bottom: 110, left: 40},
-    width = 550 - margin.left - margin.right,
-    height = 250 - margin.top - margin.bottom;
+// set the dimensions and margins of the bar chart
+let margin = {top: 20, right: 20, bottom: 110, left: 40};
+let width = 550 - margin.left - margin.right;
+let height = 250 - margin.top - margin.bottom;
 
-// set the ranges
-let x = d3.scaleBand()
-    .range([0, width])
-    .padding(0.1);
-let y = d3.scaleLinear()
-    .range([height, 0]);
+// set the ranges and padding between bars
+let x = d3.scaleBand().range([0, width]).padding(0.1);
+let y = d3.scaleLinear().range([height, 0]);
 
-// append the svg object to the body of the page
-// append a 'group' element to 'svg' and move it to the top left margin
-let svg = d3.select("#vis_container").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+let svg1 = initBarChart("#vis_container1");
+let svg2 = initBarChart("#vis_container2");
 
-let init = true;
-function fillBarChart(property) {
+let items = [];
+fetchItems();
+
+let dropDown1 = initDropDown("#vis_container1", svg1);
+let dropDown2 = initDropDown("#vis_container2", svg2);
+
+fetchProperties();
+
+/**
+ *
+ * @param container - div container where the bar chart should get added at
+ * @returns {Selection<BaseType, any, HTMLElement, any>} - the created bar chart as svg
+ */
+function initBarChart(container) {
+    return d3.select(container)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+}
+
+/** fill the given bar chart
+ * @param property - the property to be shown
+ * @param svg - the bar chart to fill
+ * @param init - should the axis get initialized
+ */
+function fillBarChart(property, svg, init) {
     let data = items;
-
     // select all bars on the graph, take them out, and exit the previous data set.
-    // then you can add/enter the new data set
     let bars = svg.selectAll(".bar")
         .remove()
         .exit()
@@ -60,21 +62,19 @@ function fillBarChart(property) {
         .attr("width", x.bandwidth())
         .attr("y", function(d) { return y(d[property]); })
         .attr("height", function(d) { return height - y(parseFloat(d[property])); })
-        .attr("id", function(d, i) { return d.name;})
+        .attr("id", function(d) { return d.name;})
         .on('mouseover', function() {
-            console.log('mouseover on: ' + d3.select(this).attr('id'));
             let name = d3.select(this).attr('id');
-            d3.select(this).style('fill', 'limegreen');
+            highlightBar(name, true);
             highlightMarker(name, true);
         })
         .on('mouseout', function() {
             let name = d3.select(this).attr('id');
-            d3.select(this).style('fill', 'steelblue');
+            highlightBar(name, false);
             highlightMarker(name, false);
         });
 
     if (init) {
-        init = false;
         // add the x Axis
         svg.append("g")
             .attr("class", "x axis")
@@ -96,8 +96,6 @@ function fillBarChart(property) {
     }
 }
 
-
-
 // fetch all items with all properties
 function fetchItems() {
     $.ajax({
@@ -106,7 +104,8 @@ function fetchItems() {
         async: true,
         success: function (data) {
             items = data;
-            fillBarChart('id');
+            fillBarChart('id', svg1, true);
+            fillBarChart('id',  svg2, true);
             setupMarkers();
             updatePopupTexts('id');
             setRequestFeedback(true);
@@ -130,24 +129,40 @@ function fetchProperties() {
             }
 
             // update the selection with the fetched properties
-            updateProperties(data)
+            updateProperties(data, dropDown1);
+            updateProperties(data, dropDown2);
         }
     });
 }
 
 // handle drop down value change
-function dropDownChange() {
-    let newProperty = d3.select(this).property('value');
-    fillBarChart(newProperty);
-    updatePopupTexts(newProperty);
+/** @param svg - bar chart that should get updated*/
+function dropDownChange(svg) {
+    return function() {
+        console.log("dropdown change with svg:" + svg);
+        let newProperty = d3.select(this).property('value');
+        fillBarChart(newProperty, svg, false);
+        updatePopupTexts(newProperty);
+    }
 }
 
-// add the drop down to the selected element
-let dropDown = d3.select("#vis_container")
-    .insert("select", "svg")
-    .on("change", dropDownChange);
+/** create the drop down
+ *
+ * @param container - the div container where the drop down should get added to
+ * @param svg - the bar chart that the drop down should be bound to
+ * @returns {Selection<BaseType, any, HTMLElement, any>} - the drop down reference
+ */
+function initDropDown(container, svg) {
+    return d3.select(container)
+        .insert("select", "svg")
+        .on("change", dropDownChange(svg));
+}
 
-function updateProperties(props) {
+/**
+ * @param props - the new properties to display
+ * @param dropDown - the drop down that should get updated
+ */
+function updateProperties(props, dropDown) {
     // fill the drop down with our properties as options
     dropDown.selectAll("option")
         .data(props)
@@ -156,6 +171,7 @@ function updateProperties(props) {
         .text(function (d) { return d; });
 }
 
+// simple error messages for the ajax requests
 function setRequestFeedback(success, status = '') {
     if (success) {
         $('#status_code').html("Request successful " + status).css("background-color", "green");
@@ -164,14 +180,24 @@ function setRequestFeedback(success, status = '') {
     }
 }
 
-function initmap() {
-    // create the tile layer with correct attribution
+/**
+ * initialize the leaflet map
+ */
+function initMap() {
     let osmUrl='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     let osmAttrib='Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors';
     let osm = new L.TileLayer(osmUrl, {minZoom: 1, maxZoom: 15, attribution: osmAttrib});
-
     map.setView(new L.LatLng(0, 0), 1);
     map.addLayer(osm);
+}
+
+function createMarkerIcon(file) {
+    return L.icon({
+        iconUrl: file,
+        iconSize: [25, 34],
+        iconAnchor: [12, 34],
+        popupAnchor: [0, -30]
+    });
 }
 
 function setupMarkers() {
@@ -191,6 +217,11 @@ function setupMarkers() {
     });
 }
 
+/**
+ * update the popup texts to the last changed dropdown value
+ *
+ * @param property - new property
+ */
 function updatePopupTexts(property) {
     items.forEach(item => {
         markers[item.name].setPopupContent("<b>" + item.name + "</b><br>"

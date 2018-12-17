@@ -5,12 +5,13 @@
     overflow: hidden;
 }
 
-#vis_container {
+#bar_chart_container {
     width: 550px;
     float: left;
 }
+
 #map_id {
     float: right;
-    height: 250px;
+    height: 500px;
     width: 550px;
 }

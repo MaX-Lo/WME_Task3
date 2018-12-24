@@ -65,13 +65,13 @@ function fillBarChart(property, svg, init) {
         .attr("id", function(d) { return d.name;})
         .on('mouseover', function() {
             let name = d3.select(this).attr('id');
-            highlightBar(name, true);
-            highlightMarker(name, true);
+            highlightBar(name);
+            highlightMarker(name);
         })
         .on('mouseout', function() {
             let name = d3.select(this).attr('id');
-            highlightBar(name, false);
-            highlightMarker(name, false);
+            removeBarHighlight(name);
+            removeMarkerHighlight(name);
         });
 
     if (init) {
@@ -207,12 +207,12 @@ function setupMarkers() {
         markers[item.name]
             .bindPopup("")
             .on('mouseover', function () {
-                highlightMarker(this.name, true);
-                highlightBar(this.name, true);
+                highlightMarker(this.name);
+                highlightBar(this.name);
             })
             .on('mouseout', function () {
-                highlightMarker(this.name, false);
-                highlightBar(this.name, false);
+                removeMarkerHighlight(this.name);
+                removeBarHighlight(this.name);
             });
     });
 }
@@ -230,20 +230,23 @@ function updatePopupTexts(property) {
     });
 }
 
-function highlightBar(itemName, isHighlight) {
+function highlightBar(itemName) {
     let bar = d3.selectAll(".bar")
         .filter(function(d) { return d.name === itemName; });
-    if (isHighlight) {
-        bar.style("fill", "limegreen");
-    } else {
-        bar.style("fill", "steelblue");
-    }
+    bar.style("fill", "limegreen");
 }
 
-function highlightMarker(itemName, isHighlight) {
-    if (isHighlight) {
-        markers[itemName].setIcon(greenMarker);
-    } else {
-        markers[itemName].setIcon(blueMarker);
-    }
+function removeBarHighlight(itemName) {
+    let bar = d3.selectAll(".bar")
+        .filter(function(d) { return d.name === itemName; });
+
+    bar.style("fill", "steelblue");
+}
+
+function highlightMarker(itemName) {
+    markers[itemName].setIcon(greenMarker);
+}
+
+function removeMarkerHighlight(itemName) {
+    markers[itemName].setIcon(blueMarker);
 }

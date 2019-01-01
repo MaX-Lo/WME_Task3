@@ -34,9 +34,6 @@ converter.fromFile('world_data.csv')
 /* add an item with name and 2 arbitrarily chosen properties */
 app.post('/items',function(req,res){
     let item = req.body;
-    console.log("item is: " + JSON.stringify(item));
-    console.log("res is: " + JSON.stringify(res.body));
-
     if (!item.name) {
         res.status(400);
         res.send('Bad request, name is missing');

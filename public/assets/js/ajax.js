@@ -33,6 +33,12 @@ $(function(){
         item['birth_rate_per_1000'] = $('#country_birth').val();
         item['cell_phones_per_100'] = $('#country_cellphone').val();
         addItem(item)
+    });
+
+    $('#country_delete').on('submit', function (event) {
+        event.preventDefault();
+        const id = $('#country_delete_id').val();
+        deleteItem(id);
     })
 });
 
@@ -125,7 +131,6 @@ function fetchItemsByRange(startID, endID) {
 
 function addItem(item) {
     let data = JSON.stringify(item);
-    console.log(data);
 
     $.ajax({
         url: 'http://localhost:3000/items',
@@ -143,6 +148,23 @@ function addItem(item) {
     });
 
     fetchItems();
+}
+
+function deleteItem(id) {
+    $.ajax({
+        url: 'http://localhost:3000/items/' + id,
+        type: 'DELETE',
+        async: true,
+        success: function(data) {
+            fetchItems();
+            setRequestFeedback(true);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText);
+        }
+    });
+
+    // fetchItems();
 }
 
 function setRequestFeedback(success, status = '') {

@@ -25,6 +25,15 @@ $(function(){
 
         alert("Please specify an ID or range.");
     });
+
+    $('#country_add').on('submit', function (event) {
+        event.preventDefault();
+        let item = {};
+        item['name'] = $('#country_name').val();
+        item['birth_rate_per_1000'] = $('#country_birth').val();
+        item['cell_phones_per_100'] = $('#country_cellphone').val();
+        addItem(item)
+    })
 });
 
 // extract start and end id from raw range input string
@@ -112,6 +121,28 @@ function fetchItemsByRange(startID, endID) {
             setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText);
         }
     });
+}
+
+function addItem(item) {
+    let data = JSON.stringify(item);
+    console.log(data);
+
+    $.ajax({
+        url: 'http://localhost:3000/items',
+        type: 'POST',
+        contentType: 'application/json',
+        data: data,
+        dataType: 'json',
+        async: true,
+        success: function(data) {
+            setRequestFeedback(true);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText);
+        }
+    });
+
+    fetchItems();
 }
 
 function setRequestFeedback(success, status = '') {

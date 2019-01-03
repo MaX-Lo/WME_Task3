@@ -3,16 +3,10 @@ $(function(){
     // filling the table with all data by default
     fetchItems();
 
-    // if both id and range are given, the id gets prioritized since it's more specific
     $('#country_filter').on('submit', function(event) {
         event.preventDefault();
         const filter_id = $("#country_filter_id").val();
         const id_range = $('#country_filter_range').val();
-
-        if (filter_id !== "") {
-            fetchItemByID(filter_id);
-            return;
-        }
 
         if (id_range !== "") {
             const iDs = parseRangeString(id_range);
@@ -21,6 +15,11 @@ $(function(){
             //Todo extract start and end from range string
             fetchItemsByRange(startID, endID);
             return
+        }
+
+        if (filter_id !== "") {
+            fetchItemByID(filter_id);
+            return;
         }
 
         alert("Please specify an ID or range.");
@@ -163,10 +162,9 @@ function deleteItem(id) {
             setRequestFeedback(false, jqXHR.status + ", " + jqXHR.responseText);
         }
     });
-
-    // fetchItems();
 }
 
+// provides feedback for the user whether the request was successful and if not what went wrong
 function setRequestFeedback(success, status = '') {
     if (success) {
         $('#status_code').html("Request successful " + status).css("background-color", "green");
